@@ -11,11 +11,13 @@ public interface IuserService {
 
     String registerUser(RegisterDTO registerDTO);
 
+    String logOut(String token);
+
     String login(LoginDTO loginDTO);
 
     AttendanceReport signIN(String token);
 
     AttendanceReport signOut(String token);
 
-    AttendanceReport getAttendenceReport(String token);
+    List<AttendanceReport> getAttendenceReport(String token);
 }

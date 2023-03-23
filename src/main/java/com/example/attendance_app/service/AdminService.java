@@ -51,11 +51,23 @@ public class AdminService implements IadminService{
     }
 
     @Override
-    public AttendanceReport getAttendenceReport(String token, int userId) {
+    public String logOutAdmin(String token) {
         LoginDTO loginDTO = jwtUtils.decodeToken(token);
         UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
         if (user.getRole().equals("Admin") && user.isLogin()) {
-            return attendancRepo.findByUserID(userId);
+            user.setLogin(false);
+            userRepo.save(user);
+            return "User Logout Successful";
+        }
+        throw new AtttendenceAppException("Invalid User");
+    }
+
+    @Override
+    public List<AttendanceReport> getAttendenceReport(String token, int userId) {
+        LoginDTO loginDTO = jwtUtils.decodeToken(token);
+        UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
+        if (user.getRole().equals("Admin") && user.isLogin()) {
+            return attendancRepo.findAlByUserID(userId);
         }
         throw new AtttendenceAppException("Please sign in your account as Admin");
     }

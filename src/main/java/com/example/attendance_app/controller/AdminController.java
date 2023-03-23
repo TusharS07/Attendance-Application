@@ -19,11 +19,18 @@ public class AdminController {
 
     @Autowired
     IadminService iadminService;
-    @PostMapping("/Login")
+    @PostMapping("/LoginAdmin")
     public ResponseEntity<Response> loginPage(@RequestBody LoginDTO loginDTO) {
         String token= iadminService.adminLogin(loginDTO);
         Response response = new Response(token, "Login Successful");
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/LogoutAdmin")
+    public ResponseEntity<Response> logOutAdmin(@RequestParam String token) {
+        iadminService.logOutAdmin(token);
+        Response response = new Response("Admin Logout", "SuccessFully Logout");
+        return  new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("ALl_Users")
@@ -35,7 +42,7 @@ public class AdminController {
 
     @GetMapping("UserAttendence_Report")
     public ResponseEntity<Response> getUsersAttendanceReport(@RequestParam String token, @RequestParam int userID) {
-        AttendanceReport attendanceReports = iadminService.getAttendenceReport(token, userID);
+        List<AttendanceReport> attendanceReports = iadminService.getAttendenceReport(token, userID);
         Response response = new Response(attendanceReports, "attendance Report of User "+userID);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

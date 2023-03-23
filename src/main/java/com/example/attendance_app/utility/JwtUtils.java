@@ -16,7 +16,7 @@ public class JwtUtils implements Serializable {
     @Autowired
     LoginDTO loginDTO;
 
-    String tokenkey = "TusharBookStore";
+    String tokenkey = "AttendanceApp";
 
 
     public String generateToken(LoginDTO loginDTO) {

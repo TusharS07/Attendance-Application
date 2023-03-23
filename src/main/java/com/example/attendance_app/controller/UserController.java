@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 @RestController
@@ -34,6 +35,13 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("/Logout")
+    public ResponseEntity<Response> logOutUser(@RequestParam String token) {
+        iuserService.logOut(token);
+        Response response = new Response("User Logout", "SuccessFully Logout");
+        return  new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("SignIn_Attendence")
     public ResponseEntity<Response> SignInAttendence(@RequestParam String token) {
         AttendanceReport attendanceReport = iuserService.signIN(token);
@@ -50,7 +58,7 @@ public class UserController {
 
     @GetMapping("Attendence_Report")
     public ResponseEntity<Response> attendenceReport(@RequestParam String token) {
-        AttendanceReport attendanceReport = iuserService.getAttendenceReport(token);
+        List<AttendanceReport> attendanceReport = iuserService.getAttendenceReport(token);
         Response response = new Response(attendanceReport, "Attendance Report");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

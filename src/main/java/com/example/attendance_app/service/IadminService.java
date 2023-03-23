@@ -9,6 +9,7 @@ import java.util.List;
 public interface IadminService {
     String adminLogin(LoginDTO loginDTO);
     List<UserModel> getAllUserList(String token);
+    String logOutAdmin(String token);
 
-    AttendanceReport getAttendenceReport(String token, int userId);
+    List<AttendanceReport> getAttendenceReport(String token, int userId);
 }

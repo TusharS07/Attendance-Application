@@ -25,6 +25,8 @@ public class AttendanceReport {
 
     private boolean isSignIN = false;
 
+    private long timeDuration;
+
     private int UserID;
 
     public AttendanceReport(LocalDate date, int userID) {
