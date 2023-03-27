@@ -4,6 +4,7 @@ import com.example.attendance_app.Response;
 import com.example.attendance_app.dto.LoginDTO;
 import com.example.attendance_app.dto.RegisterDTO;
 import com.example.attendance_app.model.AttendanceReport;
+import com.example.attendance_app.model.UserModel;
 import com.example.attendance_app.service.IuserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,13 @@ public class UserController {
     public ResponseEntity<Response> attendenceReport(@RequestParam String token) {
         List<AttendanceReport> attendanceReport = iuserService.getAttendenceReport(token);
         Response response = new Response(attendanceReport, "Attendance Report");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("Get_User_Data")
+    public ResponseEntity<Response> getUserData(@RequestParam String token) {
+        UserModel userModel = iuserService.fetchUserData(token);
+        Response response = new Response(userModel, "UserData");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -25,13 +25,13 @@ public class AdminService implements IadminService{
     JwtUtils jwtUtils;
     @Override
     public String adminLogin(LoginDTO loginDTO) {
-        UserModel userModel = userRepo.findByUserName(loginDTO.getUserName());
-        if (userModel != null) {
-            if (userModel.getPassword().equals(loginDTO.getPassword()) && userModel.getRole().equals("Admin")) {
+        UserModel admin = userRepo.findByUserName(loginDTO.getUserName());
+        if (admin != null) {
+            if (admin.getPassword().equals(loginDTO.getPassword()) && admin.getRole().equals("Admin")) {
                 String token = jwtUtils.generateToken(loginDTO);
-                userModel.setLogin(true);
-                userModel.setId(userModel.getId());
-                userRepo.save(userModel);
+                admin.setLogin(true);
+                admin.setId(admin.getId());
+                userRepo.save(admin);
                 return token;
             }
             throw new AtttendenceAppException("please check Your Password");

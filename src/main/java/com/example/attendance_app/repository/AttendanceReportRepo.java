@@ -15,13 +15,9 @@ public interface AttendanceReportRepo extends JpaRepository<AttendanceReport, In
     List<AttendanceReport> findAll();
 
 
-
-    @Query(value = "SELECT * FROM attendance_app.attendance_report where userid = :userId", nativeQuery = true)
-    AttendanceReport findByUserID(int userId);
-
     @Query(value = "SELECT * FROM attendance_app.attendance_report where userid = :userId", nativeQuery = true)
     List<AttendanceReport> findAlByUserID(int userId);
 
-    @Query(value = "SELECT * FROM attendance_app.attendance_report where userid = :userId and is_signin = true;", nativeQuery = true)
-    AttendanceReport findByUserIdAndIsSign(int userId);
+    @Query(value = "SELECT * FROM attendance_app.attendance_report where userid = :userId and sign_out = 0", nativeQuery = true)
+    AttendanceReport findByUserAndAndSignOut(int userId);
 }

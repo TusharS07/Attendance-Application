@@ -24,6 +24,7 @@ public class UserModel {
     private String phoneNo;
 
     private boolean isLogin = false;
+    private boolean isSignIN = false;
     private String role = "User";
 
     public UserModel(String userName, String emailID, String password, String phoneNo) {

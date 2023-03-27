@@ -23,14 +23,15 @@ public class AttendanceReport {
 
     private LocalTime signOut;
 
-    private boolean isSignIN = false;
-
     private long timeDuration;
 
-    private int UserID;
+    @ManyToOne()
+    @JoinColumn(name = "UserID")
+    private UserModel user;
 
-    public AttendanceReport(LocalDate date, int userID) {
+
+    public AttendanceReport(LocalDate date, UserModel user) {
         this.date = date;
-        UserID = userID;
+        this.user = user;
     }
 }

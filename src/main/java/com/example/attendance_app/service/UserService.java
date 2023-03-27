@@ -11,13 +11,9 @@ import com.example.attendance_app.repository.UserRepo;
 import com.example.attendance_app.utility.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -75,23 +71,16 @@ public class UserService implements IuserService{
         LoginDTO loginDTO = jwtUtils.decodeToken(token);
         UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
         if (user.isLogin()) {
-            if (attendancRepo.findByUserID(user.getId()) == null) {
-                AttendanceReport attendanceReport = new AttendanceReport(LocalDate.now(), user.getId());
-                attendanceReport.setSignINTime(LocalTime.now());
-                attendanceReport.setSignIN(true);
-                return attendancRepo.save(attendanceReport);
+            if (user.isSignIN()) {
+                throw new AtttendenceAppException("User Already SignedIn");
             }
             else {
-                List<AttendanceReport> attendanceReport = attendancRepo.findAlByUserID(user.getId());
-                for(int i = 0; i < attendanceReport.size(); i++) {
-                    if (attendanceReport.get(i).isSignIN() == false) {
-                        AttendanceReport newattendanceReport = new AttendanceReport(LocalDate.now(), user.getId());
-                        newattendanceReport.setSignINTime(LocalTime.now());
-                        newattendanceReport.setSignIN(true);
-                        return attendancRepo.save(newattendanceReport);
-                    }
-                }
-                throw new AtttendenceAppException("User Already SignedIn");
+                AttendanceReport attendanceReport = new AttendanceReport(LocalDate.now(), user);
+                attendanceReport.setSignINTime(LocalTime.now());
+                attendanceReport.setSignOut(LocalTime.ofSecondOfDay(0));
+                user.setSignIN(true);
+                userRepo.save(user);
+                return attendancRepo.save(attendanceReport);
             }
         }
         throw new AtttendenceAppException("Invalid User");
@@ -102,10 +91,11 @@ public class UserService implements IuserService{
         LoginDTO loginDTO = jwtUtils.decodeToken(token);
         UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
         if (user.isLogin()) {
-            AttendanceReport attendanceReport = attendancRepo.findByUserIdAndIsSign(user.getId());
+            AttendanceReport attendanceReport = attendancRepo.findByUserAndAndSignOut(user.getId());
             if (attendanceReport != null) {
                 attendanceReport.setSignOut(LocalTime.now());
-                attendanceReport.setSignIN(false);
+                user.setSignIN(false);
+                userRepo.save(user);
                 attendanceReport.setTimeDuration(findDuration(attendanceReport.getSignINTime(), attendanceReport.getSignOut()));
                 return attendancRepo.save(attendanceReport);
             }
@@ -113,6 +103,8 @@ public class UserService implements IuserService{
         }
         throw new AtttendenceAppException("Invalid User");
     }
+
+
 
     private long findDuration(LocalTime startTime, LocalTime endTime) {
         Duration time = Duration.between(startTime, endTime);
@@ -126,6 +118,16 @@ public class UserService implements IuserService{
         UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
         if (user.isLogin()) {
             return attendancRepo.findAlByUserID(user.getId());
+        }
+        throw new AtttendenceAppException("Invalid User");
+    }
+
+    @Override
+    public UserModel fetchUserData(String token) {
+        LoginDTO loginDTO = jwtUtils.decodeToken(token);
+        UserModel user = userRepo.findByUserNameAndPassword(loginDTO.getUserName(), loginDTO.getPassword());
+        if (user.isLogin()) {
+            return userRepo.findById(user.getId()).get();
         }
         throw new AtttendenceAppException("Invalid User");
     }
